@@ -1,127 +1,108 @@
 #include <iostream>
-#include <fstream>
-#include <string>
 #include <vector>
+#include <string>
 using namespace std;
 
+// Node structure for circular linked list
 struct Node {
-    string payload;
+    string name;
     Node* next;
 };
 
-/**
-* constructing a new load with the parameter as a the payload
-*/
-Node* newNode(string payload) {
+// Function to create a new node
+Node* createNode(const string& name) {
     Node* node = new Node();
-    node->payload = payload;
+    node->name = name;
     node->next = nullptr;
     return node;
 }
 
-/**
-* loadGame takes an int and a string vector of names and loads a circular 
-* linked list (of n size), with the names from the vector
-*/
-Node* loadGame(int n, vector<string> names) {
-    if(n == 0) {
-        return nullptr;
-    }
+// Function to load names into a circular linked list
+Node* loadGame(int n, const vector<string>& names) {
+    if (n == 0) return nullptr;
+    if (n != names.size()) throw runtime_error("Number of names does not match n");
 
-    if(n != names.size()) {
-        throw runtime_error("Mismatch: n does not match number of names provided");
-    }
-    
     Node* head = nullptr;
     Node* prev = nullptr;
-    string name;
 
     for (int i = 0; i < n; ++i) {
-        name = names.at(i);
-        Node* newNodePtr = newNode(name);
-        if (head == nullptr) {
-            head = newNodePtr; // initialize head specially
-        } else {
-            prev->next = newNodePtr;
-        }
-        prev = newNodePtr;
+        Node* node = createNode(names[i]);
+        if (!head) head = node;
+        else prev->next = node;
+        prev = node;
     }
-    prev->next = head; //make circular
+    prev->next = head; // make it circular
 
     return head;
 }
 
-/**
-* prints out the data of each node in the linked list
-*/
-void print(Node* start) { // prints list
+// Function to print circular linked list
+void printList(Node* start) {
+    if (!start) return;
     Node* curr = start;
-    while (curr != nullptr) {
-        cout << curr->payload << endl;
+    do {
+        cout << curr->name << " ";
         curr = curr->next;
-        if (curr == start) {
-            break; // exit circular list
-        }
-    }
+    } while (curr != start);
+    cout << endl;
 }
 
-/**
-*  Runs the Josephus algorithm on a circular linked list. This algorithm simulates 
-* a game where every k-th person is eliminated until only one person remains.
-* The function takes two parameters, start, which is a node*, pointing to the start, and an integer
-* which is how many nodes to iterate past
-*/
-Node* runGame(Node* start, int k) { // josephus w circular list, k = num skips
-    if(start == nullptr) {
-        return nullptr;
-    }
+// Josephus game function
+Node* runGame(Node* start, int k) {
+    if (!start) return nullptr;
+    if (k <= 0) throw runtime_error("k must be positive");
 
-    if(k <= 0) {
-        throw runtime_error("k must be positive");
-    }
-    
     Node* curr = start;
-    Node* prev = curr;
-    while (curr->next != curr) { // exit condition, last person standing
-        for (int i = 0; i < k; ++i) { // find kth node
+    Node* prev = nullptr;
+
+    while (curr->next != curr) { // more than one person left
+        // skip k-1 nodes
+        for (int i = 0; i < k - 1; ++i) {
             prev = curr;
             curr = curr->next;
         }
+        // eliminate curr
+        cout << "Eliminated: " << curr->name << endl;
         prev->next = curr->next;
         Node* temp = curr;
         curr = curr->next;
         delete temp;
     }
-    return curr; // last person standing
+    return curr; // last person remaining
 }
 
-/* Driver program to test above functions */
 int main() {
-    int n=1, k=1, max; // n = num names; k = num skips (minus 1)
-    string name;
-    vector<string> names;
+    int n, k;
+    cout << "Enter number of players: ";
+    cin >> n;
+    cout << "Enter step count (k): ";
+    cin >> k;
 
-    // get inputs and check if cin is in a valid state
-    cin >> n >> k;
-    if(!cin) { throw runtime_error("Faulty input"); }
-    if(n <= 0 || k < 0) { throw runtime_error("n must be positive, k must be non-negative"); }
-
-    while (cin >> name && name != ".") { names.push_back(name); } // EOF or . ends input
-
-    // initialize and run game
-    Node* startPerson = loadGame(n, names);
-    cout << endl;
-    print(startPerson);
-    cout << endl;
-    Node* lastPerson = runGame(startPerson, k);
-
-    if (lastPerson != nullptr) {
-        cout << lastPerson->payload << " wins!" << endl;
-    } else {
-        cout << "error: null game" << endl;
+    if (n <= 0 || k <= 0) {
+        cout << "Invalid input: n and k must be positive integers." << endl;
+        return 1;
     }
-    
-    delete lastPerson; // delete the last node remaining in the heap
+
+    cout << "Enter names of players (enter '.' to finish):" << endl;
+    vector<string> names;
+    string name;
+    for (int i = 0; i < n; ++i) {
+        cin >> name;
+        names.push_back(name);
+    }
+
+    Node* startPerson = loadGame(n, names);
+
+    cout << "\nInitial Circle of Players:" << endl;
+    printList(startPerson);
+    cout << endl;
+
+    Node* winner = runGame(startPerson, k);
+
+    if (winner) {
+        cout << "\nWinner is: " << winner->name << "!" << endl;
+        delete winner; // clean up last node
+    }
 
     return 0;
 }

@@ -1,33 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tic-Tac-Toe Game</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="msg-container hide">
-      <p id="msg">Winner</p>
-      <button id="new-btn">New Game</button>
-    </div>
-    <main>
-      <h1>Tic Tac Toe</h1>
-      <div class="container">
-        <div class="game">
-          <button class="box"></button>
-          <button class="box"></button>
-          <button class="box"></button>
-          <button class="box"></button>
-          <button class="box"></button>
-          <button class="box"></button>
-          <button class="box"></button>
-          <button class="box"></button>
-          <button class="box"></button>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tic-Tac-Toe | Hacktoberfest Project</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Quick inline CSS for beginners (optional, you can move to style.css) */
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    .container {
+      display: inline-block;
+      margin: 20px auto;
+    }
+    .game {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 10px;
+    }
+    .box {
+      width: 100px;
+      height: 100px;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+    .msg-container {
+      margin: 20px 0;
+    }
+    .hide {
+      display: none;
+    }
+    #reset-btn, #new-btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Message popup for winner or draw -->
+  <div class="msg-container hide">
+    <p id="msg">Winner</p>
+    <button id="new-btn">Start New Game</button>
+  </div>
+
+  <main>
+    <h1>Tic Tac Toe</h1>
+
+    <div class="container">
+      <div class="game">
+        <!-- 9 grid buttons -->
+        <button class="box"></button>
+        <button class="box"></button>
+        <button class="box"></button>
+        <button class="box"></button>
+        <button class="box"></button>
+        <button class="box"></button>
+        <button class="box"></button>
+        <button class="box"></button>
+        <button class="box"></button>
       </div>
-      <button id="reset-btn">Reset Game</button>
-    </main>
-    <script src="app.js"></script>
-  </body>
+    </div>
+
+    <button id="reset-btn">Reset Game</button>
+  </main>
+
+  <!-- Link to JavaScript file -->
+  <script src="app.js"></script>
+</body>
 </html>
